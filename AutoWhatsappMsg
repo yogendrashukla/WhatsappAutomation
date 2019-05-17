@@ -1,0 +1,47 @@
+from tkinter import *
+from selenium import webdriver
+
+driver = webdriver.Chrome('C:\chromedriver_win32\chromedriver.exe')
+driver.get('http://web.whatsapp.com')
+root = Tk()
+root.title(' -_- WhatsApp Message Repeater -_- ')
+root.geometry('800x640+0+0')
+Label(root, text='Send your message multiple times to a person or group', font=('arial', 20, 'bold'),
+      fg='darkBlue').pack()
+
+Label(root, text='Scan QR code on the web browser window : ', font=('arial', 15, 'bold'), fg='darkRed').place(x=180,
+                                                                                                              y=70)
+name, msg, repeat, info = StringVar(), StringVar(), StringVar(), StringVar()
+
+Label(root, text='Enter the name of user or group : ', font=('arial', 15,)).place(x=80, y=120)
+Entry(root, textvariable=name, width=30, bg='pink').place(x=400, y=120)
+
+Label(root, text='Enter message to send\t    : ', font=('arial', 15)).place(x=80, y=160)
+Entry(root, textvariable=msg, width=30, bg='pink').place(x=400, y=170)
+
+Label(root, text='Enter the message count\t    : ', font=('arial', 15)).place(x=80, y=200)
+Entry(root, textvariable=repeat, width=30, bg='pink').place(x=400, y=210)
+sent = 'All message sent'
+
+
+def do_it():
+    try:
+        Name = str(name.get())
+        count = int(repeat.get())
+        Msg = str(msg.get())
+        user = driver.find_element_by_xpath('//span[@title = "{}"]'.format(Name))
+        user.click()
+        msg_box = driver.find_element_by_class_name('_2S1VP')
+        for i in range(count):
+            msg_box.send_keys(Msg)
+            driver.find_element_by_class_name('_35EW6').click()
+        Label(root, text=sent, font=('arial', 15), fg='green').place(x=10, y=400)
+    except:
+        Label(root, text='Name not found / QR code not Scanned', font=('arial', 15), fg='red').place(x=10, y=400)
+        Label(root, text='Refresh the user in WhatsApp Web', font=('arial', 15), fg='red').place(x=10, y=440)
+
+
+Button(root, text='Start', font=('arial', 15), width=15, height=1, bg='red', command=do_it).place(x=250, y=300)
+
+root.mainloop()
+driver.close()
